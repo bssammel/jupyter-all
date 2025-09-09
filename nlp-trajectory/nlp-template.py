@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import plotly.express as px
+import os
 
 csv_file = "uncertainty_strong_matrix.csv"  # Path to CSV
 focus = "uncertainty"
@@ -10,8 +11,9 @@ smoothing_window = 2
 # Load your CSV
 df = pd.read_csv(csv_file)
 
-# Detect conversation chunk columns
+# Detect conversation chunk columns and normalize
 conv_chunks = [col for col in df.columns if col.startswith('chunk_')]
+df[conv_chunks] = df[conv_chunks] * 10000
 
 # Melt dataframe for plotting 
 df_long = df.melt(id_vars=['filename'], 
@@ -76,5 +78,10 @@ fig.add_scatter(x=avg_trajectory['chunk_numeric'], y=avg_trajectory['upper'],
 fig.add_scatter(x=avg_trajectory['chunk_numeric'], y=avg_trajectory['lower'],
                 mode='lines', line=dict(color='red', width=0), fill='tonexty', fillcolor='rgba(255,0,0,0.2)',
                 name='±1 Std Dev')
+
+# fig_file_name = f"{focus}.png"
+# fig_file_path = os.path.join("./created_content", f"{focus}.png")
+
+# fig.write_image(fig_file_path, scale=2, width=1200, height=800)
 
 fig.show()
